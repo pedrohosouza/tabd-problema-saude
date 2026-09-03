@@ -1,0 +1,55 @@
+services:
+  database:
+    image: postgres:18-alpine
+    environment:
+      POSTGRES_USER: tabd_saude
+      POSTGRES_PASSWORD: tabd_saude
+      POSTGRES_DB: tabd_saude
+    ports:
+      - "5432:5432"
+    volumes:
+      - database_data:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+
+  setup:
+    image: postgres:18-alpine
+    environment:
+      PGHOST: database
+      PGPORT: 5432
+      PGUSER: tabd_saude
+      PGPASSWORD: tabd_saude
+      PGDATABASE: tabd_saude
+    volumes:
+      - ./database:/database:ro
+    depends_on:
+      database:
+        condition: service_healthy
+    command: ["psql", "-X", "-v", "ON_ERROR_STOP=1", "-f", "/database/setup.sql"]
+    restart: "no"
+
+  seed:
+    image: postgres:18-alpine
+    environment:
+      PGHOST: database
+      PGPORT: 5432
+      PGUSER: tabd_saude
+      PGPASSWORD: tabd_saude
+      PGDATABASE: tabd_saude
+    volumes:
+      - ./data:/data:ro
+      - ./scripts:/scripts:ro
+    depends_on:
+      database:
+        condition: service_healthy
+      setup:
+        condition: service_completed_successfully
+    command: ["sh", "/scripts/seed.sh"]
+    restart: "no"
+
+volumes:
+  database_data:
