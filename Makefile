@@ -6,7 +6,7 @@ db-up:
 db-setup: db-up
 	docker compose run --rm --no-deps setup
 
-db-seed: setup
+db-seed: db-setup
 	docker compose run --rm --no-deps seed
 
 db-status:

@@ -1,6 +1,6 @@
 # TABD — Problema Saúde
 
-Ambiente PostgreSQL para o problema de clínica, com estrutura definitiva e carga idempotente dos CSVs fornecidos.
+Ambiente PostgreSQL para o problema de clínica.
 
 ## Requisitos
 
@@ -49,13 +49,12 @@ Cada tabela é alimentada pelo CSV de mesmo nome em `data/`. Durante a importaç
 ## Uso
 
 ```bash
-make up                          # sobe o banco, cria a estrutura e importa os CSVs
 make db-up                       # sobe somente o PostgreSQL
-make setup                       # garante que a estrutura definitiva existe
-make seed                        # executa o setup e reaplica a carga idempotente
-make status                      # mostra containers e contagens das tabelas
-make logs                        # acompanha os logs do PostgreSQL
-make down                        # para os containers e preserva os dados
+make db-setup                       # garante que a estrutura definitiva existe
+make db-seed                        # executa o setup e reaplica a carga idempotente
+make db-status                      # mostra containers e contagens das tabelas
+make db-logs                        # acompanha os logs do PostgreSQL
+make db-down                        # para os containers e preserva os dados
 ```
 
 O arquivo `database/setup.sql` é a definição única e definitiva da estrutura do banco. Este projeto não utiliza migrations incrementais nem prevê alterações futuras no esquema.
