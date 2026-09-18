@@ -15,6 +15,13 @@ usuário: tabd_saude
 senha:   tabd_saude
 ```
 
+Se a porta `5432` já estiver em uso, exporte outra porta no host antes de usar os comandos:
+
+```bash
+export POSTGRES_PORT=5433
+make db-up
+```
+
 ## Estrutura do projeto
 
 ```text

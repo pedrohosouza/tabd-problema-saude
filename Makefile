@@ -1,4 +1,4 @@
-.PHONY: db-up db-setup db-seed db-status db-logs db-reset
+.PHONY: db-up db-setup db-seed db-status db-logs db-down db-reset
 
 db-up:
 	docker compose up -d --wait database
@@ -17,6 +17,9 @@ db-status:
 db-logs:
 	docker compose logs -f database
 
+db-down:
+	docker compose down --remove-orphans
+
 db-reset:
 	docker compose down --volumes --remove-orphans
-	$(MAKE) up
+	$(MAKE) db-seed
