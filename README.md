@@ -34,7 +34,7 @@ Makefile                        comandos de operação
 
 ## Estrutura do banco
 
-O banco representa o atendimento de uma clínica e é composto por cinco tabelas:
+O banco representa o atendimento de uma clínica e é composto por cinco tabelas operacionais:
 
 | Tabela | Colunas |
 | --- | --- |
@@ -52,6 +52,18 @@ Relacionamentos:
 - `exames_solicitados.exame_id` → `exames.id`
 
 Cada tabela é alimentada pelo CSV de mesmo nome em `data/`. Durante a importação de `consultas.csv`, os valores `Sim` e `Nao` da coluna `compareceu` são convertidos, respectivamente, para `TRUE` e `FALSE`.
+
+O setup também cria os seguintes objetos analíticos e de auditoria:
+
+| Objeto | Finalidade |
+| --- | --- |
+| `mv_padroes_faltas` | Total de agendamentos e faltas por especialidade e dia da semana |
+| `mv_horarios_criticos_faltas` | Ranking dos dias e horários com mais faltas em cada especialidade |
+| `mv_ranking_exames_idade` | Ranking dos exames solicitados por faixa etária |
+| `log_auditoria_faltas` | Histórico das consultas alteradas de comparecimento para falta |
+| `registrar_falta()` / `trg_auditoria_falta` | Função e trigger responsáveis pelo registro automático das faltas |
+
+As views materializadas são atualizadas automaticamente ao final de `make db-seed`.
 
 ## Uso
 

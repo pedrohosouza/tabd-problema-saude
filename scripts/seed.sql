@@ -116,4 +116,8 @@ SELECT setval(
     COUNT(*) > 0
 ) FROM exames_solicitados;
 
+REFRESH MATERIALIZED VIEW mv_padroes_faltas;
+REFRESH MATERIALIZED VIEW mv_horarios_criticos_faltas;
+REFRESH MATERIALIZED VIEW mv_ranking_exames_idade;
+
 COMMIT;
