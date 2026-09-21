@@ -80,7 +80,7 @@ make db-down                        # para os containers e preserva os dados
 | --- | --- |
 | `queries/00_pre_processamento.sql` | Verificações de KDD: nulos, chaves estrangeiras órfãs, domínio de `compareceu`, duplicidades, derivações de dia/hora/faixa etária e incoerências conhecidas da massa |
 | `queries/01_faltas_por_especialidade.sql` | Faltas e taxa de não comparecimento por especialidade |
-| `queries/02_horarios_criticos.sql` | Ranking dos períodos críticos e taxa de faltas de um período específico |
+| `queries/02_horarios_criticos.sql` | Ranking dos períodos críticos com agendamentos, faltas e taxa, e a taxa de um período específico |
 | `queries/03_exames_por_faixa_etaria.sql` | Ranking dos exames solicitados por faixa etária |
 | `scripts/testes.sql` | Roteiro de testes T1–T7, com os resultados esperados em comentário |
 

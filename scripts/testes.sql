@@ -50,18 +50,36 @@ ORDER BY total_faltas DESC, taxa_faltas DESC;
 -- -----------------------------------------------------------------------------
 -- T4 - Períodos críticos por especialidade (pergunta 2.2)
 -- Consulta da seção 8.1.2, também em queries/02_horarios_criticos.sql.
+-- A view guarda somente as faltas, por isso o ranking é cruzado com a tabela
+-- consultas para trazer o total de agendamentos e a taxa de cada período.
 -- Esperado: 14 linhas. As três primeiras têm 2 faltas - Clinica Geral
--- (Saturday, 14h), Dermatologia (Monday, 9h) e Pediatria (Saturday, 7h).
+-- (Saturday, 14h, 2 agendamentos, 100.00%), Dermatologia (Monday, 9h,
+-- 3 agendamentos, 66.67%) e Pediatria (Saturday, 7h, 3 agendamentos, 66.67%).
 -- As demais têm 1 falta cada (empates dentro da especialidade).
 -- -----------------------------------------------------------------------------
-SELECT nome_especialidade,
-       TRIM(dia_semana) AS dia_semana,
-       hora,
-       total_faltas,
-       rank_criticidade
-FROM mv_horarios_criticos_faltas
-WHERE rank_criticidade = 1
-ORDER BY total_faltas DESC, nome_especialidade;
+SELECT mv.nome_especialidade,
+       TRIM(mv.dia_semana) AS dia_semana,
+       mv.hora,
+       agendados.total_agendamentos,
+       mv.total_faltas,
+       ROUND(100.0 * mv.total_faltas / agendados.total_agendamentos, 2)
+           AS taxa_faltas,
+       mv.rank_criticidade
+FROM mv_horarios_criticos_faltas mv
+JOIN (
+    SELECT e.nome AS nome_especialidade,
+           TO_CHAR(c.data_hora, 'Day') AS dia_semana,
+           EXTRACT(HOUR FROM c.data_hora) AS hora,
+           COUNT(*) AS total_agendamentos
+    FROM consultas c
+    JOIN especialidades e ON e.id = c.especialidade_id
+    GROUP BY e.nome, TO_CHAR(c.data_hora, 'Day'), EXTRACT(HOUR FROM c.data_hora)
+) agendados
+    ON agendados.nome_especialidade = mv.nome_especialidade
+   AND agendados.dia_semana = mv.dia_semana
+   AND agendados.hora = mv.hora
+WHERE mv.rank_criticidade = 1
+ORDER BY mv.total_faltas DESC, taxa_faltas DESC, mv.nome_especialidade;
 
 
 -- -----------------------------------------------------------------------------
